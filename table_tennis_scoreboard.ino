@@ -1,156 +1,157 @@
-#define ileScalakow 1
-#define ilePinow ileScalakow * 10
+#define shiftRegister 2
+#define numbers shiftRegister * 14
 int SER=5; 
 int RCLK=6;
 int SRCLK=7; 
-int rejestr[ilePinow];
+int registerPin[numbers];
 
 void setup(){
-  pinMode(SER, OUTPUT);
-  pinMode(RCLK, OUTPUT);
-  pinMode(SRCLK, OUTPUT);
-  czyscRejestr();
-  zapiszRejestr();
+	pinMode(SER, OUTPUT);
+	pinMode(RCLK, OUTPUT);
+	pinMode(SRCLK, OUTPUT);
+	clearRegister();
+	saveRegister();
 }
-void czyscRejestr(){
-  for(int i=0; i<ilePinow; i++)
-    rejestr[i]=LOW;
+
+void clearRegister(){
+	for(int i=0; i<numbers; i++)
+		registerPin[i]=LOW;
 }
-void zapiszRejestr(){
-  digitalWrite(RCLK, LOW); 
-  for(int i=ilePinow-1; i>=0; i--){
-    digitalWrite(SRCLK, LOW);
-    digitalWrite(SER, rejestr[i]);
-    digitalWrite(SRCLK, HIGH); 
-  }
-  digitalWrite(RCLK, HIGH); 
+void saveRegister(){
+	digitalWrite(RCLK, LOW); 
+	for(int i=numbers-1; i>=0; i--){
+    	digitalWrite(SRCLK, LOW);
+    	digitalWrite(SER, registerPin[i]);
+    	digitalWrite(SRCLK, HIGH); 
+ 	}
+  	digitalWrite(RCLK, HIGH); 
 }
-void ustawPin(int ktory, int wartosc){
-  rejestr[ktory]=wartosc;
+
+void setPin(int pinIdx, int value){
+	registerPin[pinIdx]=value;
 }
 
 void loop(){
-  int i;
+	int i;
 
-   for(i=0;i<ilePinow;i++){
-    wyswietlacz(i);
-    zapiszRejestr();
-    delay(1000);
+	for(i=0;i<numbers;i++){
+    	displayDigit(0, i);
+    	displayDigit(1, i);
+    	saveRegister();
+    	delay(1000);
 	}
 }
 
-void wyswietlacz(int cyfra) {
-  //Instrukcja switch ustawia odpowiednie stany na wyjsciach
-  //w zaleznosci od podanej cyfry
-  switch (cyfra) {
-    case 0:
-        ustawPin(0, HIGH);
-        ustawPin(1, HIGH);
-        ustawPin(2, HIGH);
-        ustawPin(3, HIGH);
-        ustawPin(4, HIGH);
-        ustawPin(5, HIGH);
-        ustawPin(6, LOW);
-    break; 
+void displayDigit(int x, int digit) {
+	switch (digit) {
+    	case 0:
+            setPin(0 + 8*x, HIGH);
+            setPin(1 + 8*x, HIGH);
+            setPin(2 + 8*x, HIGH);
+            setPin(3 + 8*x, HIGH);
+            setPin(4 + 8*x, HIGH);
+            setPin(5 + 8*x, HIGH);
+            setPin(6 + 8*x, LOW);
+    	break; 
     
-    case 1:
-        ustawPin(0, LOW);
-        ustawPin(1, HIGH);
-        ustawPin(2, HIGH);
-        ustawPin(3, LOW);
-        ustawPin(4, LOW);
-        ustawPin(5, LOW);
-        ustawPin(6, LOW);
-    break; 
+   		case 1:
+            setPin(0 + 8*x, LOW);
+            setPin(1 + 8*x, HIGH);
+            setPin(2 + 8*x, HIGH);
+            setPin(3 + 8*x, LOW);
+            setPin(4 + 8*x, LOW);
+            setPin(5 + 8*x, LOW);
+            setPin(6 + 8*x, LOW);
+   		break; 
     
-    case 2:
-        ustawPin(0, HIGH);
-        ustawPin(1, HIGH);
-        ustawPin(2, LOW);
-        ustawPin(3, HIGH);
-        ustawPin(4, HIGH);
-        ustawPin(5, LOW);
-        ustawPin(6, HIGH);
-    break; 
-    
-    case 3:
-        ustawPin(0, HIGH);
-        ustawPin(1, HIGH);
-        ustawPin(2, HIGH);
-        ustawPin(3, HIGH);
-        ustawPin(4, LOW);
-        ustawPin(5, LOW);
-        ustawPin(6, HIGH);
-    break; 
-    
-    case 4:
-        ustawPin(0, LOW);
-        ustawPin(1, HIGH);
-        ustawPin(2, HIGH);
-        ustawPin(3, LOW);
-        ustawPin(4, LOW);
-        ustawPin(5, HIGH);
-        ustawPin(6, HIGH);
-    break; 
-    
-    case 5:
-        ustawPin(0, HIGH);
-        ustawPin(1, LOW);
-        ustawPin(2, HIGH);
-        ustawPin(3, HIGH);
-        ustawPin(4, LOW);
-        ustawPin(5, HIGH);
-        ustawPin(6, HIGH);
-    break; 
-    
-    case 6:
-        ustawPin(0, HIGH);
-        ustawPin(1, LOW);
-        ustawPin(2, HIGH);
-        ustawPin(3, HIGH);
-        ustawPin(4, HIGH);
-        ustawPin(5, HIGH);
-        ustawPin(6, HIGH);
-    break;
-   
-    case 7:
-        ustawPin(0, HIGH);
-        ustawPin(1, HIGH);
-        ustawPin(2, HIGH);
-        ustawPin(3, LOW);
-        ustawPin(4, LOW);
-        ustawPin(5, LOW);
-        ustawPin(6, LOW);
-    break;
-    
-    case 8:
-        ustawPin(0, HIGH);
-        ustawPin(1, HIGH);
-        ustawPin(2, HIGH);
-        ustawPin(3, HIGH);
-        ustawPin(4, HIGH);
-        ustawPin(5, HIGH);
-        ustawPin(6, HIGH);
-    break;
-    
-    case 9:
-        ustawPin(0, HIGH);
-        ustawPin(1, HIGH);
-        ustawPin(2, HIGH);
-        ustawPin(3, HIGH);
-        ustawPin(4, LOW);
-        ustawPin(5, HIGH);
-        ustawPin(6, HIGH);
-    break;
-    
-    default:
-        ustawPin(0, LOW);
-        ustawPin(1, LOW);
-        ustawPin(2, LOW);
-        ustawPin(3, LOW);
-        ustawPin(4, LOW);
-        ustawPin(5, LOW);
-        ustawPin(6, LOW);
-    break;
+        case 2:
+            setPin(0 + 8*x, HIGH);
+            setPin(1 + 8*x, HIGH);
+            setPin(2 + 8*x, LOW);
+            setPin(3 + 8*x, HIGH);
+            setPin(4 + 8*x, HIGH);
+            setPin(5 + 8*x, LOW);
+            setPin(6 + 8*x, HIGH);
+        break; 
+
+        case 3:
+            setPin(0 + 8*x, HIGH);
+            setPin(1 + 8*x, HIGH);
+            setPin(2 + 8*x, HIGH);
+            setPin(3 + 8*x, HIGH);
+            setPin(4 + 8*x, LOW);
+            setPin(5 + 8*x, LOW);
+            setPin(6 + 8*x, HIGH);
+        break; 
+
+        case 4:
+            setPin(0 + 8*x, LOW);
+            setPin(1 + 8*x, HIGH);
+            setPin(2 + 8*x, HIGH);
+            setPin(3 + 8*x, LOW);
+            setPin(4 + 8*x, LOW);
+            setPin(5 + 8*x, HIGH);
+            setPin(6 + 8*x, HIGH);
+        break; 
+
+        case 5:
+            setPin(0 + 8*x, HIGH);
+            setPin(1 + 8*x, LOW);
+            setPin(2 + 8*x, HIGH);
+            setPin(3 + 8*x, HIGH);
+            setPin(4 + 8*x, LOW);
+            setPin(5 + 8*x, HIGH);
+            setPin(6 + 8*x, HIGH);
+        break; 
+
+        case 6:
+            setPin(0 + 8*x, HIGH);
+            setPin(1 + 8*x, LOW);
+            setPin(2 + 8*x, HIGH);
+            setPin(3 + 8*x, HIGH);
+            setPin(4 + 8*x, HIGH);
+            setPin(5 + 8*x, HIGH);
+            setPin(6 + 8*x, HIGH);
+        break;
+
+        case 7:
+            setPin(0 + 8*x, HIGH);
+            setPin(1 + 8*x, HIGH);
+            setPin(2 + 8*x, HIGH);
+            setPin(3 + 8*x, LOW);
+            setPin(4 + 8*x, LOW);
+            setPin(5 + 8*x, LOW);
+            setPin(6 + 8*x, LOW);
+        break;
+
+        case 8:
+            setPin(0 + 8*x, HIGH);
+            setPin(1 + 8*x, HIGH);
+            setPin(2 + 8*x, HIGH);
+            setPin(3 + 8*x, HIGH);
+            setPin(4 + 8*x, HIGH);
+            setPin(5 + 8*x, HIGH);
+            setPin(6 + 8*x, HIGH);
+        break;
+
+        case 9:
+            setPin(0 + 8*x, HIGH);
+            setPin(1 + 8*x, HIGH);
+            setPin(2 + 8*x, HIGH);
+            setPin(3 + 8*x, HIGH);
+            setPin(4 + 8*x, LOW);
+            setPin(5 + 8*x, HIGH);
+            setPin(6 + 8*x, HIGH);
+        break;
+
+        default:
+            setPin(0 + 8*x, LOW);
+            setPin(1 + 8*x, LOW);
+            setPin(2 + 8*x, LOW);
+            setPin(3 + 8*x, LOW);
+            setPin(4 + 8*x, LOW);
+            setPin(5 + 8*x, LOW);
+            setPin(6 + 8*x, LOW);
+        break;
   }
 }
