@@ -1,6 +1,6 @@
 #define numberOfDisplays 2
-#define digitsInDisplay 2
-#define registerOutputs digitsInDisplay * 9
+#define digitsInDisplay 3
+#define registerOutputs digitsInDisplay * 8
 
 class Button {
     public:
@@ -17,6 +17,7 @@ class Display {
   	int RCLK;
     int SRCLK;
  	int registerPin[registerOutputs];
+ 	int setPoints = 0;
 };
 
 Display display1;
@@ -69,7 +70,7 @@ void setPin(int displayNumber, int pinIdx, int value){
 
 void loop(){
 	moveCounterOnButtonPress(0);  
- 	moveCounterOnButtonPress(1);  
+ 	moveCounterOnButtonPress(1); 
 }
 
 void moveCounterOnButtonPress(int displayNumber) {
@@ -82,13 +83,25 @@ void moveCounterOnButtonPress(int displayNumber) {
         	showNumber(displayNumber, counter);
         }	
     }
-  	  displays[displayNumber].button.lastButtonState = displays[displayNumber].button.buttonState;
+  	displays[displayNumber].button.lastButtonState = displays[displayNumber].button.buttonState;
 
+  	const int winner = getWinner();
   	
-    if(isSetEnd()) {
+    if(winner != -1) {
       	displays[0].button.buttonPushCounter = 0;
       	displays[1].button.buttonPushCounter = 0;
+    	displays[winner].setPoints++;
       
+      	if (displays[winner].setPoints < 3) {
+        	displayDigit(winner, 2, displays[winner].setPoints);
+        } else {
+        	displays[0].setPoints = 0;
+          	displays[1].setPoints = 0;
+          
+      		displayDigit(0, 2, displays[winner].setPoints);
+        	displayDigit(1, 2, displays[winner].setPoints);
+        }
+        
     	showNumber(0, 0);  
   		showNumber(1, 0); 
     };
@@ -107,16 +120,19 @@ void showNumber(int displayNumber, int number) {
   	delay(50);
 }
 
-boolean isSetEnd() {
+int getWinner() {
 	int counter1 = displays[0].button.buttonPushCounter;
 	int counter2 = displays[1].button.buttonPushCounter;
       
   	if ((counter1 > 10 || counter2 > 10) && abs(counter1 - counter2) > 1) {
-      delay(3000);
-        return true;
+     	delay(3000);
+        if (counter1 > counter2) {
+        	return 0;
+        }
+        return 1;
     }
     
- 	return false;
+ 	return -1;
 }
 
 int firstDigit(int n) {
